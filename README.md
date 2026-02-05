@@ -1,1 +1,1 @@
-Hello THis is our first commit.
+Hello This is our first commit.
