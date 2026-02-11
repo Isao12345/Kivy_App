@@ -21,3 +21,10 @@
             on_press:
                 root.add_task(new_task_input.text)
                 new_task_input.text = ""
+        Button:
+            text: "ruk lhor"
+            font_size: 60  # ขนาดข้อความบนปุ่ม
+            on_press:
+                root.add_task(new_task_input.text)
+                new_task_input.text = ""
+            pos_hint: {"center_x": 0.5, "center_y": 1}
