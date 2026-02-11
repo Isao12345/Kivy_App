@@ -1,0 +1,20 @@
+<HomeScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        Label:
+            id: tasks_label
+            text: "Tasks: []"
+
+        TextInput:
+            id: new_task_input
+            hint_text: "Enter new task"
+            multiline: False
+
+        Button:
+            text: "Add Task"
+            on_press:
+                root.add_task(new_task_input.text)
+                new_task_input.text = ""
