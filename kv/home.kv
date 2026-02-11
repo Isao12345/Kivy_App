@@ -1,57 +1,107 @@
-<HomeScreen>:
-    canvas.before:
-        Color:
-            rgba: 0.95, 0.95, 1, 1  # สีพื้นหลังอ่อนๆ ฟ้าอมม่วง
-        Rectangle:
-            pos: self.pos
-            size: self.size
+<TaskRow>:
+    size_hint_y: None
+    height: dp(50)
+    spacing: dp(10)
 
+    Label:
+        id: task_label
+        font_size: dp(18)
+        text_size: self.width, None
+        valign: "middle"
+
+    Button:
+        id: done_btn
+        text: "✔"
+        size_hint_x: None
+        width: dp(50)
+        background_color: 0.2, 0.7, 0.3, 1
+        color: 1, 1, 1, 1
+
+    Button:
+        id: delete_btn
+        text: "✖"
+        size_hint_x: None
+        width: dp(50)
+        background_color: 0.9, 0.3, 0.3, 1
+        color: 1, 1, 1, 1
+
+
+<HomeScreen>:
     BoxLayout:
         orientation: "vertical"
-        padding: dp(30)
-        spacing: dp(20)
+        padding: dp(20)
+        spacing: dp(15)
 
         Label:
-            id: title_label
-            text: "📝 Student Life Manager"
-            font_size: dp(32)
+            text: "📚 Student Life Manager"
+            font_size: dp(28)
             bold: True
-            color: 0.2, 0.2, 0.5, 1  # สีเข้มสบายตา
             size_hint_y: None
             height: self.texture_size[1]
 
-        Label:
-            id: tasks_label
-            text: "Tasks: []"
-            font_size: dp(24)
-            color: 0.1, 0.1, 0.3, 1
-            text_size: self.width - dp(20), None
-            size_hint_y: None
-            height: self.texture_size[1]
-
-        TextInput:
-            id: new_task_input
-            hint_text: "Enter new task..."
-            multiline: False
-            font_size: dp(20)
+        BoxLayout:
             size_hint_y: None
             height: dp(50)
-            padding: [dp(10), dp(10), dp(10), dp(10)]
-            background_color: 1, 1, 1, 1
-            foreground_color: 0, 0, 0, 1
-            cursor_color: 0, 0, 0, 1
+            spacing: dp(10)
 
-        Button:
-            text: "➕ Add Task"
-            font_size: dp(22)
-            size_hint_y: None
-            height: dp(50)
-            background_color: 0.3, 0.6, 0.9, 1
-            color: 1, 1, 1, 1
-            on_press:
-                root.add_task(new_task_input.text)
-                new_task_input.text = ""
+            TextInput:
+                id: new_task_input
+                hint_text: "Enter new task..."
+                multiline: False
+                font_size: dp(18)
 
-        Widget:
-            size_hint_y: None
-            height: dp(20)  # เพิ่ม spacing ด้านล่าง
+            Button:
+                text: "Add"
+                font_size: dp(18)
+                size_hint_x: None
+                width: dp(80)
+                background_color: 0.3, 0.6, 0.9, 1
+                color: 1, 1, 1, 1
+                on_press: root.add_task(new_task_input.text)
+
+            Button:
+                text: "Go to Calendar"
+                size_hint_y: None
+                height: dp(50)
+                background_color: 0.7, 0.5, 0.9, 1
+                color: 1,1,1,1
+                on_press: app.root.current = "calendar"
+
+        ScrollView:
+            do_scroll_x: False
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(20)
+
+                # -------- Active Section --------
+                Label:
+                    text: "🔵 Active Tasks"
+                    font_size: dp(22)
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                BoxLayout:
+                    id: active_container
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: dp(10)
+
+                # -------- Done Section --------
+                Label:
+                    text: "🟢 Completed Tasks"
+                    font_size: dp(22)
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                BoxLayout:
+                    id: done_container
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: dp(10)

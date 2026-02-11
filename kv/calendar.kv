@@ -1,0 +1,26 @@
+<CalendarScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(10)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(10)
+
+            Button:
+                text: "Back to Home"
+                background_color: 0.3,0.6,0.9,1
+                color: 1,1,1,1
+                on_press: app.root.current = "home"
+
+        ScrollView:
+            do_scroll_x: False
+
+            BoxLayout:
+                id: calendar_container
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(10)
