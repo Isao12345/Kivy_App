@@ -7,14 +7,17 @@
         Label:
             id: tasks_label
             text: "Tasks: []"
+            font_size: 24  # ขนาดข้อความใหญ่ขึ้น
 
         TextInput:
             id: new_task_input
             hint_text: "Enter new task"
             multiline: False
+            font_size: 20  # ขนาดข้อความใน TextInput
 
         Button:
             text: "Add Task"
+            font_size: 20  # ขนาดข้อความบนปุ่ม
             on_press:
                 root.add_task(new_task_input.text)
                 new_task_input.text = ""
