@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
+from kivy.metrics import dp
 import os
 import json
 
@@ -13,40 +14,55 @@ DATA_PATH = os.path.join(BASE_DIR, "data", "data.json")
 Builder.load_file(KV_PATH)
 
 
+# -----------------------------
+# Data Manager (โหลด/บันทึก data.json)
+# -----------------------------
+def load_data():
+    try:
+        with open(DATA_PATH, "r") as f:
+            return json.load(f)
+    except:
+        return {"tasks": []}
+
+
+def save_data(data):
+    with open(DATA_PATH, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+# -----------------------------
+# Home Screen
+# -----------------------------
 class HomeScreen(Screen):
     def on_enter(self):
         self.load_tasks()
 
     def load_tasks(self):
         """โหลด tasks จาก data.json และอัพเดต UI"""
-        try:
-            with open(DATA_PATH, "r") as f:
-                data = json.load(f)
-            self.tasks = data.get("tasks", [])
-        except:
-            self.tasks = []
+        data = load_data()
+        self.tasks = data.get("tasks", [])
         self.update_ui()
 
     def update_ui(self):
         """อัพเดต Label แสดง tasks"""
-        tasks_str = ", ".join([t["task"] for t in self.tasks])
-        self.ids.tasks_label.text = f"Tasks: {tasks_str}"
+        if self.tasks:
+            tasks_str = "\n".join([f"- {t['task']}" for t in self.tasks])
+        else:
+            tasks_str = "No tasks yet."
+        self.ids.tasks_label.text = f"Tasks:\n{tasks_str}"
 
     def add_task(self, task_text):
         """เพิ่ม task ใหม่"""
-        if not task_text:
+        if not task_text.strip():
             return
-        self.tasks.append({"task": task_text, "done": False})
-        self.save_data()
+        self.tasks.append({"task": task_text.strip(), "done": False})
+        save_data({"tasks": self.tasks})
         self.update_ui()
 
-    def save_data(self):
-        """บันทึก tasks ลง data.json"""
-        data = {"tasks": self.tasks}
-        with open(DATA_PATH, "w") as f:
-            json.dump(data, f, indent=4)
 
-
+# -----------------------------
+# App
+# -----------------------------
 class StudentLifeApp(App):
     def build(self):
         sm = ScreenManager()
