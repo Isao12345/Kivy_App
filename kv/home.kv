@@ -1,19 +1,32 @@
+#:import dp kivy.metrics.dp
+
 <TaskRow>:
     size_hint_y: None
-    height: dp(50)
+    height: dp(60)
+    padding: dp(10)
     spacing: dp(10)
+
+    canvas.before:
+        Color:
+            rgba: (0.95, 0.95, 0.95, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [12]
 
     Label:
         id: task_label
         font_size: dp(18)
         text_size: self.width, None
         valign: "middle"
+        color: 0, 0, 0, 1
 
     Button:
         id: done_btn
         text: "✔"
         size_hint_x: None
         width: dp(50)
+        background_normal: ""
         background_color: 0.2, 0.7, 0.3, 1
         color: 1, 1, 1, 1
 
@@ -22,26 +35,44 @@
         text: "✖"
         size_hint_x: None
         width: dp(50)
+        background_normal: ""
         background_color: 0.9, 0.3, 0.3, 1
         color: 1, 1, 1, 1
 
 
 <HomeScreen>:
+    canvas.before:
+        Color:
+            rgba: (0.92, 0.95, 1, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: "vertical"
         padding: dp(20)
         spacing: dp(15)
 
         Label:
-            text: "📚 Student Life Manager"
+            text: "Student Life Manager"
             font_size: dp(28)
             bold: True
             size_hint_y: None
             height: self.texture_size[1]
+            color: 0.1, 0.1, 0.3, 1
 
+        Label:
+            id: today_label
+            text: "Today:"
+            font_size: dp(18)
+            size_hint_y: None
+            height: self.texture_size[1]
+            color: 0.2, 0.2, 0.5, 1
+
+        # -------- Task Input --------
         BoxLayout:
             size_hint_y: None
-            height: dp(50)
+            height: dp(55)
             spacing: dp(10)
 
             TextInput:
@@ -49,24 +80,48 @@
                 hint_text: "Enter new task..."
                 multiline: False
                 font_size: dp(18)
+                background_normal: ""
+                background_color: 1,1,1,1
+                padding: dp(10)
 
             Button:
                 text: "Add"
                 font_size: dp(18)
                 size_hint_x: None
-                width: dp(80)
+                width: dp(90)
+                background_normal: ""
                 background_color: 0.3, 0.6, 0.9, 1
                 color: 1, 1, 1, 1
                 on_press: root.add_task(new_task_input.text)
 
+        # -------- Navigation Buttons --------
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(10)
+
             Button:
-                text: "Go to Calendar"
-                size_hint_y: None
-                height: dp(50)
+                text: "Calendar"
+                background_normal: ""
                 background_color: 0.7, 0.5, 0.9, 1
                 color: 1,1,1,1
                 on_press: app.root.current = "calendar"
 
+            Button:
+                text: "My Class"
+                background_normal: ""
+                background_color: 0.9, 0.6, 0.4, 1
+                color: 1,1,1,1
+                on_press: app.root.current = "myclass"
+
+            Button:
+                text: "Events"
+                background_normal: ""
+                background_color: 0.4, 0.7, 0.5, 1
+                color: 1,1,1,1
+                on_press: app.root.current = "event"
+
+        # -------- Task Lists --------
         ScrollView:
             do_scroll_x: False
 
@@ -74,15 +129,17 @@
                 orientation: "vertical"
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(20)
+                spacing: dp(25)
+                padding: dp(5)
 
-                # -------- Active Section --------
+                # -------- Active Tasks --------
                 Label:
                     text: "🔵 Active Tasks"
                     font_size: dp(22)
                     bold: True
                     size_hint_y: None
                     height: self.texture_size[1]
+                    color: 0.1, 0.2, 0.6, 1
 
                 BoxLayout:
                     id: active_container
@@ -91,13 +148,14 @@
                     height: self.minimum_height
                     spacing: dp(10)
 
-                # -------- Done Section --------
+                # -------- Completed Tasks --------
                 Label:
                     text: "🟢 Completed Tasks"
                     font_size: dp(22)
                     bold: True
                     size_hint_y: None
                     height: self.texture_size[1]
+                    color: 0.1, 0.5, 0.3, 1
 
                 BoxLayout:
                     id: done_container

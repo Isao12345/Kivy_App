@@ -1,0 +1,51 @@
+#:import dp kivy.metrics.dp
+
+<FileChooserPopup@Popup>:
+    title: "Select Image"
+    size_hint: 0.9, 0.9
+
+    BoxLayout:
+        orientation: "vertical"
+
+        FileChooserListView:
+            id: chooser
+            filters: ["*.png", "*.jpg", "*.jpeg"]
+
+        Button:
+            text: "Select"
+            size_hint_y: None
+            height: dp(50)
+            on_press:
+                app.root.get_screen("myclass").select_image(chooser.selection)
+                root.dismiss()
+
+
+<MyClassScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(15)
+
+        Label:
+            text: "📚 My Class Schedule"
+            font_size: dp(28)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1]
+
+        Image:
+            id: class_image
+            source: ""
+            fit_mode: "contain"   # 🔥 แทน allow_stretch / keep_ratio
+
+        Button:
+            text: "Upload Schedule Image"
+            size_hint_y: None
+            height: dp(50)
+            background_normal: ""
+            background_color: 0.4, 0.6, 0.9, 1
+            color: 1,1,1,1
+            on_press: filechooser.open()
+
+        FileChooserPopup:
+            id: filechooser

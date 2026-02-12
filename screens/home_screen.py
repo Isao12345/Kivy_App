@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 
@@ -27,15 +28,10 @@ def save_data(data):
 
 
 # -----------------------------
-# Task Row Widget
+# Task Row
 # -----------------------------
 class TaskRow(BoxLayout):
-    def set_background(self, done: bool):
-        """เปลี่ยนสี Label ตามสถานะ task"""
-        if done:
-            self.ids.task_label.color = (0.4, 0.4, 0.4, 1)  # สีเทา
-        else:
-            self.ids.task_label.color = (0, 0, 0, 1)  # สีดำ
+    pass
 
 
 # -----------------------------
@@ -47,42 +43,54 @@ class HomeScreen(Screen):
         self.refresh_tasks()
 
     def refresh_tasks(self):
-        """โหลด task จาก data.json และเพิ่มลง Active / Done"""
         self.ids.active_container.clear_widgets()
         self.ids.done_container.clear_widgets()
+
+        today = datetime.now()
+        today_str = f"{today.day}/{today.month}/{today.year}"
+
+        # อัปเดตหัวข้อ Today
+        self.ids.today_label.text = f"📅 Today: {today_str}"
 
         data = load_data()
         self.tasks = data.get("tasks", [])
 
         for index, task in enumerate(self.tasks):
+
+            # ถ้าไม่มี date ให้ถือว่าเป็นวันนี้
+            task_date = task.get("date", today_str)
+
+            if task_date != today_str:
+                continue
+
             row = TaskRow()
             row.ids.task_label.text = task["task"]
-            row.set_background(task["done"])
 
-            # bind ปุ่ม
             row.ids.done_btn.bind(on_press=lambda x, i=index: self.toggle_done(i))
             row.ids.delete_btn.bind(on_press=lambda x, i=index: self.delete_task(i))
 
-            # เพิ่มลง container
             if task["done"]:
+                row.ids.task_label.color = (0.4, 0.4, 0.4, 1)
                 self.ids.done_container.add_widget(row)
             else:
+                row.ids.task_label.color = (0, 0, 0, 1)
                 self.ids.active_container.add_widget(row)
 
     def add_task(self, text):
-        """เพิ่ม task ใหม่"""
         if not text.strip():
             return
 
-        data = load_data()
-        data["tasks"].append({"task": text.strip(), "done": False})
-        save_data(data)
+        today = datetime.now()
+        today_str = f"{today.day}/{today.month}/{today.year}"
 
+        data = load_data()
+        data["tasks"].append({"task": text.strip(), "done": False, "date": today_str})
+
+        save_data(data)
         self.ids.new_task_input.text = ""
         self.refresh_tasks()
 
     def delete_task(self, index):
-        """ลบ task"""
         data = load_data()
         if index < len(data["tasks"]):
             data["tasks"].pop(index)
@@ -90,11 +98,8 @@ class HomeScreen(Screen):
             self.refresh_tasks()
 
     def toggle_done(self, index):
-        """สลับสถานะ done / active"""
         data = load_data()
-        if index >= len(data["tasks"]):
-            return
-
-        data["tasks"][index]["done"] = not data["tasks"][index]["done"]
-        save_data(data)
-        self.refresh_tasks()
+        if index < len(data["tasks"]):
+            data["tasks"][index]["done"] = not data["tasks"][index]["done"]
+            save_data(data)
+            self.refresh_tasks()

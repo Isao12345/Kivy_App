@@ -1,20 +1,5 @@
 {
-    "tasks": [
-        {
-            "task": "SiSao",
-            "done": false
-        },
-        {
-            "task": "ruk",
-            "done": false
-        },
-        {
-            "task": "Messi",
-            "done": false
-        },
-        {
-            "task": "google",
-            "done": false
-        }
-    ]
+    "tasks": [],
+    "class_image": "",
+    "events": []
 }
