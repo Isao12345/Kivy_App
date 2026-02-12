@@ -7,11 +7,13 @@ from screens.myclass_screen import MyClassScreen
 from screens.event_screen import EventScreen
 import os
 
-# โหลด kv ของ Home + Calendar
 BASE_DIR = os.path.dirname(__file__)
+
+# โหลด kv ทุกไฟล์
 Builder.load_file(os.path.join(BASE_DIR, "kv/home.kv"))
 Builder.load_file(os.path.join(BASE_DIR, "kv/calendar.kv"))
-Builder.load_file("kv/myclass.kv")
+Builder.load_file(os.path.join(BASE_DIR, "kv/myclass.kv"))
+Builder.load_file(os.path.join(BASE_DIR, "kv/event.kv"))  # ✅ เพิ่มบรรทัดนี้
 
 
 class StudentLifeApp(App):
