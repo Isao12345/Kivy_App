@@ -9,40 +9,32 @@ DATA_PATH = os.path.join(DATA_DIR, "data.json")
 IMAGE_DIR = os.path.join(DATA_DIR, "images")
 
 
-# --------------------
-# Load / Save
-# --------------------
-
-
 def load_data():
     if not os.path.exists(DATA_PATH):
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(DATA_PATH, "w", encoding="utf-8") as f:
+            json.dump({"tasks": [], "class_image": "", "events": []}, f)
         return {"tasks": [], "class_image": "", "events": []}
 
     try:
         with open(DATA_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
     except json.JSONDecodeError:
+        with open(DATA_PATH, "w", encoding="utf-8") as f:
+            json.dump({"tasks": [], "class_image": "", "events": []}, f)
         return {"tasks": [], "class_image": "", "events": []}
 
 
 def save_data(data):
     os.makedirs(DATA_DIR, exist_ok=True)
-
     with open(DATA_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
 
-# --------------------
-# Screen
-# --------------------
-
-
 class MyClassScreen(Screen):
-
     def on_enter(self):
         data = load_data()
         image_path = data.get("class_image", "")
-
         if image_path and os.path.exists(image_path):
             self.ids.class_image.source = image_path
         else:
@@ -51,22 +43,15 @@ class MyClassScreen(Screen):
     def select_image(self, selection):
         if not selection:
             return
-
         original_path = selection[0]
-
-        # ✅ copy รูปมาเก็บใน project (ปลอดภัยกว่า)
         os.makedirs(IMAGE_DIR, exist_ok=True)
-
         filename = os.path.basename(original_path)
         new_path = os.path.join(IMAGE_DIR, filename)
-
         shutil.copy(original_path, new_path)
 
-        # บันทึก path ใหม่
         data = load_data()
         data["class_image"] = new_path
         save_data(data)
 
-        # แสดงรูป
         self.ids.class_image.source = new_path
         self.ids.class_image.reload()

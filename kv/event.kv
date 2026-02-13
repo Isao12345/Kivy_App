@@ -1,41 +1,14 @@
+#:import dp kivy.metrics.dp
+
 <EventScreen>:
     BoxLayout:
         orientation: "vertical"
         padding: dp(20)
-        spacing: dp(15)
-
-        # Inputs สำหรับเพิ่ม/แก้ไข event
-        BoxLayout:
-            size_hint_y: None
-            height: dp(50)
-            spacing: dp(10)
-            TextInput:
-                id: event_title
-                hint_text: "Event Title"
-            TextInput:
-                id: event_date
-                hint_text: "YYYY-MM-DD"
-            TextInput:
-                id: event_time
-                hint_text: "HH:MM"
-        TextInput:
-            id: event_details
-            hint_text: "Details"
-            multiline: True
-            size_hint_y: None
-            height: dp(80)
-
-        Button:
-            text: "Add Event"
-            size_hint_y: None
-            height: dp(50)
-            on_press:
-                root.add_event(event_title.text, event_date.text, event_time.text, event_details.text)
+        spacing: dp(10)
 
         Label:
-            text: "Upcoming Events"
-            font_size: dp(22)
-            bold: True
+            text: "📅 All Tasks & Events"
+            font_size: dp(28)
             size_hint_y: None
             height: self.texture_size[1]
 
@@ -46,9 +19,8 @@
                 orientation: "vertical"
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(10)
+                spacing: dp(5)
 
-        # ปุ่มกลับ Home
         Button:
             text: "Back Home"
             size_hint_y: None

@@ -1,5 +1,13 @@
 {
     "tasks": [],
-    "class_image": "",
-    "events": []
+    "class_image": "/Users/furkorns/Desktop/student_life_app/data/images/IMG_4330.png",
+    "events": [
+        {
+            "title": "gitkrab",
+            "date": "2026-02-14",
+            "time": "23.59",
+            "details": "sawasdee",
+            "done": true
+        }
+    ]
 }
