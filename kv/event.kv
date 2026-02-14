@@ -10,38 +10,15 @@
     
     BoxLayout:
         orientation: "vertical"
-        padding: dp(0)
-        spacing: dp(0)
+        padding: dp(20)
+        spacing: dp(10)
 
-        # Header
-        BoxLayout:
-            orientation: "vertical"
+        Label:
+            text: "📅 All Tasks & Events"
+            font_size: dp(28)
             size_hint_y: None
-            height: dp(100)
-            padding: dp(20)
-            spacing: dp(10)
-            canvas.before:
-                Color:
-                    rgba: 0.29, 0.78, 0.45, 1.0
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-            
-            Label:
-                text: "📋 Tasks & Events"
-                font_size: dp(32)
-                color: 1, 1, 1, 1
-                size_hint_y: None
-                height: self.texture_size[1]
-            
-            Label:
-                text: "Manage all your tasks and upcoming events"
-                font_size: dp(14)
-                color: 0.9, 0.98, 0.92, 1.0
-                size_hint_y: None
-                height: self.texture_size[1]
+            height: self.texture_size[1]
 
-        # Content
         ScrollView:
             do_scroll_x: False
             
