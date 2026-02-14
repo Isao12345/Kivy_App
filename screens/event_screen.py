@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.metrics import dp
-from kivy.graphics import Color, RoundedRectangle
+from kivy.graphics import Color, RoundedRectangle, Line
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -33,15 +33,13 @@ class EventScreen(Screen):
         self.refresh_events()
 
     def refresh_events(self):
-        """Load events + tasks and add widgets to container"""
         container = self.ids.event_container
         container.clear_widgets()
-
         data = load_data()
 
         combined = []
 
-        # Combine tasks as event-like dict
+        # Combine tasks as events
         for t in data.get("tasks", []):
             combined.append(
                 {
@@ -67,149 +65,120 @@ class EventScreen(Screen):
                 }
             )
 
-        # Sort by date
+        # Sort by date descending
         combined.sort(key=lambda x: x["date"], reverse=True)
 
         if not combined:
-            # Show empty state
-            empty_label = Label(
-                text="No tasks or events yet.\nCreate one by clicking a date in Calendar!",
-                font_size=dp(16),
-                color=(0.5, 0.5, 0.5, 1.0),
-                size_hint_y=None,
-                height=dp(100),
+            container.add_widget(
+                Label(
+                    text="No tasks or events yet.\nAdd one from Calendar!",
+                    font_size=dp(16),
+                    color=(0.5, 0.5, 0.5, 1),
+                    size_hint_y=None,
+                    height=dp(80),
+                )
             )
-            container.add_widget(empty_label)
             self._combined_events = combined
             return
 
         for idx, ev in enumerate(combined):
-            # Create card container
             card = BoxLayout(
                 orientation="vertical",
                 size_hint_y=None,
-                height=dp(90),
-                padding=dp(12),
-                spacing=dp(8),
+                height=dp(80),
+                padding=dp(10),
+                spacing=dp(5),
             )
 
-            # Style the card
-            if ev["done"]:
-                bg_color = (0.92, 0.95, 0.97, 1.0)
-                card.opacity = 0.6
-            else:
-                bg_color = (1, 1, 1, 1.0)
-                card.opacity = 1.0
-
+            # Background with rounded rectangle
             card.canvas.before.clear()
             with card.canvas.before:
-                Color(*bg_color)
-                RoundedRectangle(size=card.size, pos=card.pos, radius=[dp(8)])
-                # Border
-                Color(0.88, 0.88, 0.92, 1.0)
-                from kivy.graphics import Line
-
+                Color(0.97, 0.97, 0.98, 1)  # light grey
+                card.bg = RoundedRectangle(size=card.size, pos=card.pos, radius=[dp(8)])
+                Color(0.85, 0.85, 0.85, 1)
                 Line(rectangle=(card.x, card.y, card.width, card.height), width=1)
 
-            # Header with title and time
-            header = BoxLayout(size_hint_y=None, height=dp(28), spacing=dp(8))
+            # Update background when card moves/resizes
+            card.bind(pos=lambda instance, value, r=card.bg: setattr(r, "pos", value))
+            card.bind(size=lambda instance, value, r=card.bg: setattr(r, "size", value))
 
-            # Icon based on type
+            # Title and type
             icon = "📝" if ev["is_task"] else "📅"
             title_label = Label(
                 text=f"{icon} {ev['title']}",
                 font_size=dp(14),
                 bold=True,
-                color=(0.2, 0.2, 0.2, 1.0),
-                size_hint_x=0.7,
+                color=(0.2, 0.2, 0.2, 1),
+                size_hint_y=None,
+                height=dp(20),
             )
-            header.add_widget(title_label)
+            card.add_widget(title_label)
 
-            # Date and time info
-            info_text = ev["date"]
+            # Date + Time
+            dt_text = ev["date"]
             if ev["time"]:
-                info_text += f" {ev['time']}"
-
-            info_label = Label(
-                text=info_text,
+                dt_text += f" {ev['time']}"
+            dt_label = Label(
+                text=dt_text,
                 font_size=dp(11),
-                color=(0.6, 0.6, 0.6, 1.0),
-                size_hint_x=0.3,
+                color=(0.5, 0.5, 0.5, 1),
+                size_hint_y=None,
+                height=dp(18),
             )
-            header.add_widget(info_label)
-            card.add_widget(header)
+            card.add_widget(dt_label)
 
-            # Details if present
-            if ev.get("details", ""):
-                details_label = Label(
+            # Details
+            if ev.get("details"):
+                det_label = Label(
                     text=ev["details"],
                     font_size=dp(11),
-                    color=(0.4, 0.45, 0.5, 1.0),
+                    color=(0.3, 0.3, 0.3, 1),
                     size_hint_y=None,
                     height=dp(18),
                 )
-                card.add_widget(details_label)
+                card.add_widget(det_label)
 
             # Action buttons
-            actions = BoxLayout(size_hint_y=None, height=dp(35), spacing=dp(8))
+            actions = BoxLayout(size_hint_y=None, height=dp(30), spacing=dp(8))
 
-            # Done button
             done_btn = Button(
                 text="✓ Done" if not ev["done"] else "✓ Undo",
-                size_hint_x=0.5,
+                background_normal="",
                 background_color=(
-                    (0.29, 0.78, 0.45, 1.0)
-                    if not ev["done"]
-                    else (0.88, 0.88, 0.92, 1.0)
+                    (0.3, 0.7, 0.4, 1) if not ev["done"] else (0.9, 0.9, 0.9, 1)
                 ),
+                color=(1, 1, 1, 1) if not ev["done"] else (0, 0, 0, 1),
             )
-            done_btn.canvas.before.clear()
-            with done_btn.canvas.before:
-                Color(*done_btn.background_color)
-                RoundedRectangle(size=done_btn.size, pos=done_btn.pos, radius=[dp(6)])
-
             done_btn.bind(on_press=lambda btn, i=idx: self.mark_done(i))
             actions.add_widget(done_btn)
 
-            # Delete button
             del_btn = Button(
                 text="✕ Delete",
-                size_hint_x=0.5,
-                background_color=(0.88, 0.43, 0.45, 1.0),
+                background_normal="",
+                background_color=(0.88, 0.43, 0.45, 1),
+                color=(1, 1, 1, 1),
             )
-            del_btn.canvas.before.clear()
-            with del_btn.canvas.before:
-                Color(*del_btn.background_color)
-                RoundedRectangle(size=del_btn.size, pos=del_btn.pos, radius=[dp(6)])
-
             del_btn.bind(on_press=lambda btn, i=idx: self.delete_event(i))
             actions.add_widget(del_btn)
 
             card.add_widget(actions)
             container.add_widget(card)
 
-        # Store combined for access in mark_done/delete
+        # Store combined events for callback access
         self._combined_events = combined
 
     def mark_done(self, index):
-        """Toggle Done status of task/event"""
         combined = self._combined_events
         item = combined[index]
-
         data = load_data()
 
         if item["is_task"]:
-            if index < len(data["tasks"]):
-                data["tasks"][index]["done"] = not data["tasks"][index]["done"]
+            data["tasks"][index]["done"] = not data["tasks"][index]["done"]
         else:
-            # Find events index
-            ev_idx = 0
             for i, e in enumerate(data.get("events", [])):
                 if e["title"] == item["title"] and e["date"] == item["date"]:
-                    ev_idx = i
+                    data["events"][i]["done"] = not data["events"][i]["done"]
                     break
-            if ev_idx < len(data.get("events", [])):
-                data["events"][ev_idx]["done"] = not data["events"][ev_idx]["done"]
 
         save_data(data)
         self.refresh_events()
@@ -217,21 +186,15 @@ class EventScreen(Screen):
     def delete_event(self, index):
         combined = self._combined_events
         item = combined[index]
-
         data = load_data()
 
         if item["is_task"]:
-            if index < len(data["tasks"]):
-                del data["tasks"][index]
+            del data["tasks"][index]
         else:
-            # Find events index
-            ev_idx = 0
             for i, e in enumerate(data.get("events", [])):
                 if e["title"] == item["title"] and e["date"] == item["date"]:
-                    ev_idx = i
+                    del data["events"][i]
                     break
-            if ev_idx < len(data.get("events", [])):
-                del data["events"][ev_idx]
 
         save_data(data)
         self.refresh_events()
