@@ -3,7 +3,7 @@
 <CalendarScreen>:
     canvas.before:
         Color:
-            rgba: 1, 1, 1, 1   # white background
+            rgba: 1, 0.9, 0.95, 1   # pastel pink background
         Rectangle:
             size: self.size
             pos: self.pos
@@ -30,8 +30,9 @@
 
             Button:
                 text: "<< Prev Year"
-                background_color: 0.8,0.1,0.2,1   # dark red
+                background_color: 0.8,0.1,0.2,1
                 color: 1,1,1,1
+                size_hint_x: 0.3
                 on_press: root.prev_year()
 
             Label:
@@ -39,9 +40,8 @@
                 text: str(root.current_year)
                 font_size: dp(18)
                 bold: True
-                color: 0.9,0.3,0.5,1   # pink-ish
-                size_hint_x: None
-                width: dp(100)
+                color: 0.9,0.3,0.5,1
+                size_hint_x: 0.4
                 halign: "center"
                 valign: "middle"
                 text_size: self.size
@@ -50,6 +50,7 @@
                 text: "Next Year >>"
                 background_color: 0.8,0.1,0.2,1
                 color: 1,1,1,1
+                size_hint_x: 0.3
                 on_press: root.next_year()
 
         # -------- Month Selection --------
@@ -60,8 +61,9 @@
 
             Button:
                 text: "<< Prev Month"
-                background_color: 0.9,0.3,0.4,1   # red
+                background_color: 0.9,0.3,0.4,1
                 color: 1,1,1,1
+                size_hint_x: 0.3
                 on_press: root.prev_month()
 
             Label:
@@ -70,8 +72,7 @@
                 font_size: dp(18)
                 bold: True
                 color: 0.9,0.3,0.5,1
-                size_hint_x: None
-                width: dp(120)
+                size_hint_x: 0.4
                 halign: "center"
                 valign: "middle"
                 text_size: self.size
@@ -80,6 +81,7 @@
                 text: "Next Month >>"
                 background_color: 0.9,0.3,0.4,1
                 color: 1,1,1,1
+                size_hint_x: 0.3
                 on_press: root.next_month()
 
         # -------- Weekdays --------
@@ -90,7 +92,7 @@
             spacing: dp(5)
             canvas.before:
                 Color:
-                    rgba: 1,0.95,0.97,1   # light pink background
+                    rgba: 1,0.85,0.9,1   # lighter pastel pink for weekdays
                 Rectangle:
                     size: self.size
                     pos: self.pos
@@ -112,18 +114,21 @@
                 color: 0.9,0.3,0.5,1
             Label:
                 text: "Sat"
-                color: 0.8,0.1,0.2,1   # dark red
+                color: 0.8,0.1,0.2,1
             Label:
                 text: "Sun"
                 color: 0.8,0.1,0.2,1
 
         # -------- Calendar Days --------
-        GridLayout:
-            id: days_container
-            cols: 7
-            spacing: dp(5)
-            size_hint_y: None
-            height: self.minimum_height
+        ScrollView:
+            do_scroll_x: False
+            size_hint_y: 0.65
+            GridLayout:
+                id: days_container
+                cols: 7
+                spacing: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
 
         # -------- Navigation Buttons --------
         BoxLayout:
@@ -133,12 +138,12 @@
 
             Button:
                 text: "Back Home"
-                background_color: 0.9,0.1,0.2,1   # dark red
+                background_color: 0.9,0.1,0.2,1
                 color: 1,1,1,1
                 on_press: app.root.current = "home"
 
             Button:
                 text: "Go to Events"
-                background_color: 0.9,0.3,0.4,1   # red
+                background_color: 0.9,0.3,0.4,1
                 color: 1,1,1,1
                 on_press: app.root.current = "event"

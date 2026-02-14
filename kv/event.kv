@@ -3,54 +3,51 @@
 <EventScreen>:
     canvas.before:
         Color:
-            rgba: 0.97, 0.98, 1.0, 1.0
+            rgba: 1, 1, 1, 1   # White background
         Rectangle:
             size: self.size
             pos: self.pos
-    
+
     BoxLayout:
         orientation: "vertical"
         padding: dp(20)
-        spacing: dp(10)
+        spacing: dp(15)
 
+        # ---------- Header ----------
         Label:
-            text: "📅 All Tasks & Events"
+            text: "📋 All Tasks & Events"
             font_size: dp(28)
+            bold: True
             size_hint_y: None
-            height: self.texture_size[1]
+            height: dp(40)
+            color: 0.9,0.2,0.4,1   # Pinkish header
 
+        # ---------- Scroll Area for Events ----------
         ScrollView:
             do_scroll_x: False
-            
+
             BoxLayout:
                 id: event_container
                 orientation: "vertical"
                 size_hint_y: None
                 height: self.minimum_height
-                padding: dp(20)
+                padding: dp(10)
                 spacing: dp(12)
 
-        # Navigation Buttons
+        # ---------- Navigation Buttons ----------
         BoxLayout:
             size_hint_y: None
             height: dp(60)
             spacing: dp(10)
             padding: dp(15)
-            canvas.before:
-                Color:
-                    rgba: 1, 1, 1, 1
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-                Color:
-                    rgba: 0.93, 0.93, 0.97, 1.0
-                Rectangle:
-                    pos: (self.x, self.y + self.height - dp(1))
-                    size: (self.width, dp(1))
 
             Button:
                 text: "← Back Home"
-                background_color: 0.6, 0.6, 0.6, 1.0
+                font_size: dp(16)
+                bold: True
+                background_normal: ""
+                background_color: 0.6,0.6,0.6,1
+                color: 1,1,1,1
                 on_press: app.root.current = "home"
                 canvas.before:
                     Color:
@@ -62,7 +59,11 @@
 
             Button:
                 text: "Calendar →"
-                background_color: 0.88, 0.43, 0.45, 1.0
+                font_size: dp(16)
+                bold: True
+                background_normal: ""
+                background_color: 0.9,0.3,0.4,1
+                color: 1,1,1,1
                 on_press: app.root.current = "calendar"
                 canvas.before:
                     Color:
