@@ -19,27 +19,26 @@
             font_size: dp(28)
             bold: True
             size_hint_y: None
-            height: dp(50)
-            color: 0.9,0.2,0.4,1   # Pinkish header
+            height: dp(40)
+            color: 0.9,0.2,0.4,1
 
-        # ---------- Scroll Area for Events ----------
+        # ---------- Scroll Area ----------
         ScrollView:
             do_scroll_x: False
-            size_hint_y: 0.75
+            do_scroll_y: True
 
-            BoxLayout:
+            GridLayout:
                 id: event_container
-                orientation: "vertical"
+                cols: 1
+                spacing: dp(12)
                 size_hint_y: None
                 height: self.minimum_height
-                padding: dp(5)
-                spacing: dp(12)
 
         # ---------- Navigation Buttons ----------
         BoxLayout:
             size_hint_y: None
             height: dp(60)
-            spacing: dp(15)
+            spacing: dp(10)
 
             Button:
                 text: "← Back Home"
@@ -55,7 +54,7 @@
                     RoundedRectangle:
                         size: self.size
                         pos: self.pos
-                        radius: [dp(10)]
+                        radius: [dp(8)]
 
             Button:
                 text: "Calendar →"
@@ -71,4 +70,4 @@
                     RoundedRectangle:
                         size: self.size
                         pos: self.pos
-                        radius: [dp(10)]
+                        radius: [dp(8)]

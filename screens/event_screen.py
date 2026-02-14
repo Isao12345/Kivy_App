@@ -39,20 +39,20 @@ class EventScreen(Screen):
 
         combined = []
 
-        # Combine tasks as events
+        # รวม tasks เป็นแบบ events
         for t in data.get("tasks", []):
             combined.append(
                 {
                     "title": t["task"],
                     "date": t.get("date", ""),
                     "time": "",
-                    "details": "",
+                    "details": t.get("details", ""),
                     "done": t.get("done", False),
                     "is_task": True,
                 }
             )
 
-        # Combine events
+        # รวม events
         for e in data.get("events", []):
             combined.append(
                 {
@@ -65,32 +65,35 @@ class EventScreen(Screen):
                 }
             )
 
-        # Sort by date descending
+        # เรียงตามวันที่ล่าสุด
         combined.sort(key=lambda x: x["date"], reverse=True)
 
         if not combined:
-            container.add_widget(
-                Label(
-                    text="No tasks or events yet.\nAdd one from Calendar!",
-                    font_size=dp(16),
-                    color=(0.5, 0.5, 0.5, 1),
-                    size_hint_y=None,
-                    height=dp(80),
-                )
+            empty_label = Label(
+                text="No tasks or events yet.\nAdd one from Calendar!",
+                font_size=dp(16),
+                color=(0.5, 0.5, 0.5, 1),
+                size_hint_y=None,
+                height=dp(80),
             )
+            container.add_widget(empty_label)
             self._combined_events = combined
             return
 
         for idx, ev in enumerate(combined):
+            # การ์ดแต่ละอัน
             card = BoxLayout(
-                orientation="vertical",
-                size_hint_y=None,
-                height=dp(80),
-                padding=dp(10),
-                spacing=dp(5),
+                orientation="vertical", size_hint_y=None, padding=dp(10), spacing=dp(5)
             )
 
-            # Background with rounded rectangle
+            # ความสูงขึ้นอยู่กับรายละเอียด
+            card_height = dp(60)  # base
+            if ev.get("details"):
+                card_height += dp(18)
+            card_height += dp(35)  # สำหรับปุ่ม
+            card.height = card_height
+
+            # Background
             card.canvas.before.clear()
             with card.canvas.before:
                 Color(0.97, 0.97, 0.98, 1)  # light grey
@@ -98,11 +101,11 @@ class EventScreen(Screen):
                 Color(0.85, 0.85, 0.85, 1)
                 Line(rectangle=(card.x, card.y, card.width, card.height), width=1)
 
-            # Update background when card moves/resizes
-            card.bind(pos=lambda instance, value, r=card.bg: setattr(r, "pos", value))
-            card.bind(size=lambda instance, value, r=card.bg: setattr(r, "size", value))
+            # อัปเดตตำแหน่งเมื่อ card เปลี่ยน size/pos
+            card.bind(pos=lambda inst, val, r=card.bg: setattr(r, "pos", val))
+            card.bind(size=lambda inst, val, r=card.bg: setattr(r, "size", val))
 
-            # Title and type
+            # Header: icon + title
             icon = "📝" if ev["is_task"] else "📅"
             title_label = Label(
                 text=f"{icon} {ev['title']}",
@@ -114,7 +117,7 @@ class EventScreen(Screen):
             )
             card.add_widget(title_label)
 
-            # Date + Time
+            # วันที่และเวลา
             dt_text = ev["date"]
             if ev["time"]:
                 dt_text += f" {ev['time']}"
@@ -127,7 +130,7 @@ class EventScreen(Screen):
             )
             card.add_widget(dt_label)
 
-            # Details
+            # รายละเอียด
             if ev.get("details"):
                 det_label = Label(
                     text=ev["details"],
@@ -138,9 +141,10 @@ class EventScreen(Screen):
                 )
                 card.add_widget(det_label)
 
-            # Action buttons
-            actions = BoxLayout(size_hint_y=None, height=dp(30), spacing=dp(8))
+            # ปุ่มทำเสร็จ / ลบ
+            actions = BoxLayout(size_hint_y=None, height=dp(35), spacing=dp(8))
 
+            # Done / Undo
             done_btn = Button(
                 text="✓ Done" if not ev["done"] else "✓ Undo",
                 background_normal="",
@@ -152,6 +156,7 @@ class EventScreen(Screen):
             done_btn.bind(on_press=lambda btn, i=idx: self.mark_done(i))
             actions.add_widget(done_btn)
 
+            # Delete
             del_btn = Button(
                 text="✕ Delete",
                 background_normal="",
@@ -164,7 +169,13 @@ class EventScreen(Screen):
             card.add_widget(actions)
             container.add_widget(card)
 
-        # Store combined events for callback access
+        # ป้องกันปัญหาความสูงทับกัน
+        total_height = sum([child.height for child in container.children]) + dp(
+            8
+        ) * len(container.children)
+        container.height = total_height
+
+        # เก็บ combined events สำหรับ callback
         self._combined_events = combined
 
     def mark_done(self, index):
