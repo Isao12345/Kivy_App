@@ -1,30 +1,123 @@
 #:import dp kivy.metrics.dp
 
 <MyClassScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.97, 0.98, 1.0, 1.0
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
     BoxLayout:
         orientation: "vertical"
-        padding: dp(20)
-        spacing: dp(15)
 
-        Label:
-            text: "My Class"
-            font_size: dp(28)
+        # ---------------- Header ----------------
+        BoxLayout:
+            orientation: "vertical"
             size_hint_y: None
-            height: self.texture_size[1]
+            height: dp(100)
+            padding: dp(20)
+            spacing: dp(10)
+            canvas.before:
+                Color:
+                    rgba: 0.15, 0.51, 0.92, 1.0
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
 
-        Image:
-            id: class_image
-            size_hint_y: 0.5
-            allow_stretch: True
-            keep_ratio: True
+            Label:
+                text: "🎓 My Class"
+                font_size: dp(32)
+                color: 1, 1, 1, 1
 
-        FileChooserIconView:
-            size_hint_y: 0.4
-            filters: ["*.png", "*.jpg", "*.jpeg"]
-            on_selection: root.select_image(self.selection)
+            Label:
+                text: "Upload and organize your class materials"
+                font_size: dp(14)
+                color: 0.9, 0.95, 1.0, 1.0
 
-        Button:
-            text: "Back Home"
-            size_hint_y: None
-            height: dp(50)
-            on_press: app.root.current = "home"
+        # ---------------- Scroll Area ----------------
+        ScrollView:
+            size_hint_y: 0.85
+            do_scroll_x: False
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(20)
+                spacing: dp(15)
+
+                # Image Preview
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(250)
+                    padding: dp(15)
+                    spacing: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+
+                    Label:
+                        text: "Class Image Preview"
+                        font_size: dp(14)
+                        bold: True
+                        color: 0.15, 0.51, 0.92, 1.0
+
+                    Image:
+                        id: class_image
+                        size_hint_y: 1
+                        allow_stretch: True
+                        keep_ratio: True
+
+                # File Chooser
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(300)
+                    padding: dp(15)
+                    spacing: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: 0, 0, 0, 1  # เปลี่ยนพื้นหลัง FileChooser เป็นดำ
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+
+                    Label:
+                        text: "Select Image File"
+                        font_size: dp(14)
+                        bold: True
+                        color: 1, 1, 1, 1  # ตัวอักษรสีขาวเพื่อมองเห็นบนพื้นดำ
+
+                    FileChooserListView:
+                        id: file_chooser
+                        size_hint_y: 1
+                        filters: ["*.png", "*.jpg", "*.jpeg"]
+                        background_color: 0, 0, 0, 1  # สีพื้น FileChooser ดำ
+                        foreground_color: 1, 1, 1, 1  # ตัวอักษรสีขาว
+                        on_selection: root.select_image(self.selection)
+
+        # ---------------- Bottom Buttons ----------------
+        BoxLayout:
+            size_hint_y: 0.15
+            padding: dp(15)
+            spacing: dp(10)
+
+            Button:
+                text: "← Back Home"
+                background_color: 0.6, 0.6, 0.6, 1
+                on_press: app.root.current = "home"
+
+            Button:
+                text: "Apply Image"
+                background_color: 0.15, 0.51, 0.92, 1
+                on_press: root.apply_image()
+
+            Button:
+                text: "Events →"
+                background_color: 0.29, 0.78, 0.45, 1
+                on_press: app.root.current = "event"

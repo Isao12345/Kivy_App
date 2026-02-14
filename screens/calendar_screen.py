@@ -4,12 +4,30 @@ from datetime import date, timedelta, datetime
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
+from kivy.graphics import Color, RoundedRectangle
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 DATA_PATH = os.path.join(DATA_DIR, "data.json")
+
+# Month names
+MONTH_NAMES = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
 
 
 def load_data():
@@ -67,6 +85,13 @@ class CalendarScreen(Screen):
         container: GridLayout = self.ids.days_container
         container.clear_widgets()
 
+        # Update month/year label
+        month_name = MONTH_NAMES[self.current_month - 1]
+        if hasattr(self.ids, "month_year_label"):
+            self.ids.month_year_label.text = f"{month_name} {self.current_year}"
+        if hasattr(self.ids, "month_label"):
+            self.ids.month_label.text = month_name
+
         first_day = date(self.current_year, self.current_month, 1)
         start_weekday = first_day.weekday()  # 0=Monday
         # วันสุดท้ายของเดือน
@@ -77,14 +102,29 @@ class CalendarScreen(Screen):
                 days=1
             )
         total_days = last_day.day
+        today = date.today()
 
         # ใส่ช่องว่างก่อนวันที่แรก
         for _ in range(start_weekday):
-            container.add_widget(Button(text="", disabled=True))
+            empty_btn = Button(text="", disabled=True, size_hint_y=None, height=dp(50))
+            empty_btn.canvas.before.clear()
+            container.add_widget(empty_btn)
 
         # สร้างปุ่มวันที่
         for day in range(1, total_days + 1):
-            day_btn = Button(text=str(day), size_hint_y=None, height=dp(40))
+            day_date = date(self.current_year, self.current_month, day)
+            is_today = day_date == today
+
+            day_btn = Button(text=str(day), size_hint_y=None, height=dp(50))
+
+            # Style current day
+            if is_today:
+                day_btn.background_color = (0.15, 0.51, 0.92, 1.0)
+                day_btn.color = (1, 1, 1, 1)
+            else:
+                day_btn.background_color = (1, 1, 1, 1)
+                day_btn.color = (0.2, 0.2, 0.2, 1.0)
+
             day_btn.bind(on_press=lambda btn, d=day: self.add_task_for_day(d))
             container.add_widget(day_btn)
 

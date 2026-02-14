@@ -1,28 +1,96 @@
 #:import dp kivy.metrics.dp
 
 <EventScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.97, 0.98, 1.0, 1.0
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    
     BoxLayout:
         orientation: "vertical"
-        padding: dp(20)
-        spacing: dp(10)
+        padding: dp(0)
+        spacing: dp(0)
 
-        Label:
-            text: "📅 All Tasks & Events"
-            font_size: dp(28)
+        # Header
+        BoxLayout:
+            orientation: "vertical"
             size_hint_y: None
-            height: self.texture_size[1]
+            height: dp(100)
+            padding: dp(20)
+            spacing: dp(10)
+            canvas.before:
+                Color:
+                    rgba: 0.29, 0.78, 0.45, 1.0
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            
+            Label:
+                text: "📋 Tasks & Events"
+                font_size: dp(32)
+                color: 1, 1, 1, 1
+                size_hint_y: None
+                height: self.texture_size[1]
+            
+            Label:
+                text: "Manage all your tasks and upcoming events"
+                font_size: dp(14)
+                color: 0.9, 0.98, 0.92, 1.0
+                size_hint_y: None
+                height: self.texture_size[1]
 
+        # Content
         ScrollView:
             do_scroll_x: False
+            
             BoxLayout:
                 id: event_container
                 orientation: "vertical"
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(5)
+                padding: dp(20)
+                spacing: dp(12)
 
-        Button:
-            text: "Back Home"
+        # Navigation Buttons
+        BoxLayout:
             size_hint_y: None
-            height: dp(50)
-            on_press: app.root.current = "home"
+            height: dp(60)
+            spacing: dp(10)
+            padding: dp(15)
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+                Color:
+                    rgba: 0.93, 0.93, 0.97, 1.0
+                Rectangle:
+                    pos: (self.x, self.y + self.height - dp(1))
+                    size: (self.width, dp(1))
+
+            Button:
+                text: "← Back Home"
+                background_color: 0.6, 0.6, 0.6, 1.0
+                on_press: app.root.current = "home"
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [dp(8)]
+
+            Button:
+                text: "Calendar →"
+                background_color: 0.88, 0.43, 0.45, 1.0
+                on_press: app.root.current = "calendar"
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [dp(8)]

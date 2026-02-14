@@ -1,31 +1,197 @@
 #:import dp kivy.metrics.dp
 
 <HomeScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.97, 0.98, 1.0, 1.0
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    
     BoxLayout:
         orientation: "vertical"
-        padding: dp(20)
-        spacing: dp(20)
-
-        Label:
-            text: "🏠 Home"
-            font_size: dp(32)
+        padding: dp(0)
+        spacing: dp(0)
+        
+        # Header
+        BoxLayout:
+            orientation: "vertical"
             size_hint_y: None
-            height: self.texture_size[1]
-
-        Button:
-            text: "Go to My Class"
-            size_hint_y: None
-            height: dp(50)
-            on_press: app.root.current = "myclass"
-
-        Button:
-            text: "Go to Calendar"
-            size_hint_y: None
-            height: dp(50)
-            on_press: app.root.current = "calendar"
-
-        Button:
-            text: "Go to Events"
-            size_hint_y: None
-            height: dp(50)
-            on_press: app.root.current = "event"
+            height: dp(180)
+            padding: dp(20)
+            spacing: dp(10)
+            canvas.before:
+                Color:
+                    rgba: 0.15, 0.51, 0.92, 1.0
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            
+            Label:
+                text: "📚 Student Life"
+                font_size: dp(36)
+                color: 1, 1, 1, 1
+                size_hint_y: None
+                height: self.texture_size[1]
+            
+            Label:
+                text: "Manage your classes, events & schedule"
+                font_size: dp(14)
+                color: 0.9, 0.95, 1.0, 1.0
+                size_hint_y: None
+                height: self.texture_size[1]
+        
+        # Content
+        ScrollView:
+            do_scroll_x: False
+            
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(20)
+                spacing: dp(15)
+                
+                # My Class Card
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(120)
+                    padding: dp(15)
+                    spacing: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                        Color:
+                            rgba: 0.93, 0.93, 0.97, 1.0
+                        Rectangle:
+                            pos: (self.x, self.y)
+                            size: (self.width, dp(2))
+                
+                    Label:
+                        text: "🎓 My Class"
+                        font_size: dp(20)
+                        bold: True
+                        color: 0.15, 0.51, 0.92, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Label:
+                        text: "Upload and manage your class materials"
+                        font_size: dp(12)
+                        color: 0.4, 0.45, 0.5, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Button:
+                        text: "Go to My Class →"
+                        size_hint_y: None
+                        height: dp(45)
+                        background_color: 0.15, 0.51, 0.92, 1.0
+                        on_press: app.root.current = "myclass"
+                        canvas.before:
+                            Color:
+                                rgba: self.background_color
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [dp(8)]
+                
+                # Calendar Card
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(120)
+                    padding: dp(15)
+                    spacing: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                        Color:
+                            rgba: 0.93, 0.93, 0.97, 1.0
+                        Rectangle:
+                            pos: (self.x, self.y)
+                            size: (self.width, dp(2))
+                
+                    Label:
+                        text: "📅 Calendar"
+                        font_size: dp(20)
+                        bold: True
+                        color: 0.88, 0.43, 0.45, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Label:
+                        text: "View and navigate through months and years"
+                        font_size: dp(12)
+                        color: 0.4, 0.45, 0.5, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Button:
+                        text: "Go to Calendar →"
+                        size_hint_y: None
+                        height: dp(45)
+                        background_color: 0.88, 0.43, 0.45, 1.0
+                        on_press: app.root.current = "calendar"
+                        canvas.before:
+                            Color:
+                                rgba: self.background_color
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [dp(8)]
+                
+                # Events Card
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(120)
+                    padding: dp(15)
+                    spacing: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                        Color:
+                            rgba: 0.93, 0.93, 0.97, 1.0
+                        Rectangle:
+                            pos: (self.x, self.y)
+                            size: (self.width, dp(2))
+                
+                    Label:
+                        text: "📋 Tasks & Events"
+                        font_size: dp(20)
+                        bold: True
+                        color: 0.29, 0.78, 0.45, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Label:
+                        text: "Manage all your tasks and upcoming events"
+                        font_size: dp(12)
+                        color: 0.4, 0.45, 0.5, 1.0
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                    
+                    Button:
+                        text: "Go to Events →"
+                        size_hint_y: None
+                        height: dp(45)
+                        background_color: 0.29, 0.78, 0.45, 1.0
+                        on_press: app.root.current = "event"
+                        canvas.before:
+                            Color:
+                                rgba: self.background_color
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [dp(8)]

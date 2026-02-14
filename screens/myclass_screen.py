@@ -15,7 +15,6 @@ def load_data():
         with open(DATA_PATH, "w", encoding="utf-8") as f:
             json.dump({"tasks": [], "class_image": "", "events": []}, f)
         return {"tasks": [], "class_image": "", "events": []}
-
     try:
         with open(DATA_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -32,6 +31,8 @@ def save_data(data):
 
 
 class MyClassScreen(Screen):
+    preview_path = ""  # path ของไฟล์ที่เลือกเพื่อ preview
+
     def on_enter(self):
         data = load_data()
         image_path = data.get("class_image", "")
@@ -39,15 +40,25 @@ class MyClassScreen(Screen):
             self.ids.class_image.source = image_path
         else:
             self.ids.class_image.source = ""
+        self.preview_path = ""  # reset preview
 
     def select_image(self, selection):
         if not selection:
             return
-        original_path = selection[0]
+        self.preview_path = selection[0]
+        # แสดง preview ทันที
+        self.ids.class_image.source = self.preview_path
+        self.ids.class_image.reload()
+
+    def apply_image(self):
+        """กดปุ่มนี้เพื่อบันทึกภาพลง data.json และ copy ไปโฟลเดอร์ images"""
+        if not self.preview_path:
+            return
+
         os.makedirs(IMAGE_DIR, exist_ok=True)
-        filename = os.path.basename(original_path)
+        filename = os.path.basename(self.preview_path)
         new_path = os.path.join(IMAGE_DIR, filename)
-        shutil.copy(original_path, new_path)
+        shutil.copy(self.preview_path, new_path)
 
         data = load_data()
         data["class_image"] = new_path
@@ -55,3 +66,4 @@ class MyClassScreen(Screen):
 
         self.ids.class_image.source = new_path
         self.ids.class_image.reload()
+        self.preview_path = ""  # reset preview

@@ -1,13 +1,20 @@
 {
     "tasks": [],
-    "class_image": "/Users/furkorns/Desktop/student_life_app/data/images/IMG_4330.png",
+    "class_image": "/Users/furkorns/Desktop/student_life_app/data/images/305160935_938879687064889_7807277104385695642_n-removebg-preview.png",
     "events": [
         {
-            "title": "gitkrab",
-            "date": "2026-02-14",
-            "time": "23.59",
-            "details": "sawasdee",
-            "done": true
+            "title": "kiwi",
+            "date": "2026-02-15",
+            "time": "23:59",
+            "details": "Ajarnboat",
+            "done": false
+        },
+        {
+            "title": "python test",
+            "date": "2026-02-22",
+            "time": "23:59",
+            "details": "AjarnBoat",
+            "done": false
         }
     ]
 }
