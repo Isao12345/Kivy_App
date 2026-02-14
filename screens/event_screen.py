@@ -106,7 +106,7 @@ class EventScreen(Screen):
             card.bind(size=lambda inst, val, r=card.bg: setattr(r, "size", val))
 
             # Header: icon + title
-            icon = "📝" if ev["is_task"] else "📅"
+            icon = ">" if ev["is_task"] else ">"
             title_label = Label(
                 text=f"{icon} {ev['title']}",
                 font_size=dp(14),
