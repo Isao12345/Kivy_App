@@ -2,6 +2,11 @@ import os
 import json
 import shutil
 from kivy.uix.screenmanager import Screen
+from kivy.uix.popup import Popup
+from kivy.uix.image import Image
+from kivy.uix.boxlayout import BoxLayout
+from kivy.graphics import Color, Rectangle
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -50,22 +55,16 @@ class MyClassScreen(Screen):
             return
 
         self.preview_path = selection[0]
-
-        # แสดง preview ทันที
         self.ids.class_image.source = self.preview_path
         self.ids.class_image.reload()
 
     def apply_image(self):
-        """บันทึกรูปลงโฟลเดอร์ images และอัปเดต data.json"""
-
         if not self.preview_path:
             return
 
         os.makedirs(IMAGE_DIR, exist_ok=True)
-
         filename = os.path.basename(self.preview_path)
 
-        # ป้องกันไฟล์ชื่อซ้ำ
         new_path = os.path.join(IMAGE_DIR, filename)
         counter = 1
         while os.path.exists(new_path):
@@ -77,7 +76,7 @@ class MyClassScreen(Screen):
 
         data = load_data()
 
-        # ลบรูปเก่า (ถ้ามี)
+        # ลบรูปเก่า
         old_image = data.get("class_image")
         if old_image and os.path.exists(old_image):
             try:
@@ -93,24 +92,52 @@ class MyClassScreen(Screen):
         self.preview_path = ""
 
     def delete_image(self):
-        """ลบรูปที่บันทึกไว้"""
-
         data = load_data()
         image_path = data.get("class_image")
 
-        # ลบไฟล์จริง
         if image_path and os.path.exists(image_path):
             try:
                 os.remove(image_path)
             except Exception:
                 pass
 
-        # ล้างค่าใน json
         data["class_image"] = ""
         save_data(data)
 
-        # ล้างรูปในหน้าจอ
         self.ids.class_image.source = ""
         self.ids.class_image.reload()
-
         self.preview_path = ""
+
+    # ------------------ 🔥 ZOOM FUNCTION ------------------
+
+    def open_fullscreen(self):
+        image_path = self.ids.class_image.source
+
+        if not image_path:
+            return
+
+        layout = BoxLayout()
+
+        # พื้นหลังดำ
+        with layout.canvas.before:
+            Color(0, 0, 0, 1)
+            self.bg_rect = Rectangle(size=layout.size, pos=layout.pos)
+
+        layout.bind(size=self._update_rect, pos=self._update_rect)
+
+        full_image = Image(source=image_path, allow_stretch=True, keep_ratio=True)
+
+        layout.add_widget(full_image)
+
+        popup = Popup(
+            content=layout,
+            size_hint=(1, 1),
+            auto_dismiss=True,
+            background="",  # ไม่มีกรอบขาว
+        )
+
+        popup.open()
+
+    def _update_rect(self, instance, value):
+        self.bg_rect.pos = instance.pos
+        self.bg_rect.size = instance.size
