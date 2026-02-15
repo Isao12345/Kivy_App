@@ -1,20 +1,5 @@
 {
     "tasks": [],
     "class_image": "/Users/furkorns/Desktop/student_life_app/data/images/ClassS.jpg",
-    "events": [
-        {
-            "title": "gitkrab",
-            "date": "2026-02-14",
-            "time": "23.59",
-            "details": "sawasdee",
-            "done": false
-        },
-        {
-            "title": "Hello World",
-            "date": "2026-02-14",
-            "time": "18:30",
-            "details": "We did it!",
-            "done": false
-        }
-    ]
+    "events": []
 }
