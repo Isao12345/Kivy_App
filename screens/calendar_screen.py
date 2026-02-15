@@ -115,15 +115,18 @@ class CalendarScreen(Screen):
             day_date = date(self.current_year, self.current_month, day)
             is_today = day_date == today
 
-            day_btn = Button(text=str(day), size_hint_y=None, height=dp(50))
+            day_btn = Button(text=str(day), size_hint_y=None, height=dp(50), background_normal="")
 
             # Style current day
             if is_today:
-                day_btn.background_color = (0.15, 0.51, 0.92, 1.0)
-                day_btn.color = (1, 1, 1, 1)
+                if is_today:
+                    day_btn.background_color = (0.65, 0.08, 0.28, 1)
+                    day_btn.color = (1, 1, 1, 1)
+            # Style others day
             else:
-                day_btn.background_color = (1, 1, 1, 1)
-                day_btn.color = (0.2, 0.2, 0.2, 1.0)
+                day_btn.background_color = (0.85, 0.4, 0.6, 1)
+                day_btn.color = (1, 1, 1, 1)
+
 
             day_btn.bind(on_press=lambda btn, d=day: self.add_task_for_day(d))
             container.add_widget(day_btn)

@@ -6,6 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.metrics import dp
 from kivy.graphics import Color, RoundedRectangle, Line
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -83,7 +84,7 @@ class EventScreen(Screen):
         for idx, ev in enumerate(combined):
             # การ์ดแต่ละอัน
             card = BoxLayout(
-                orientation="vertical", size_hint_y=None, padding=dp(10), spacing=dp(5)
+                orientation="vertical", size_hint_y=None, padding=(dp(12), dp(10), dp(12), dp(10)), spacing=dp(6)
             )
 
             # ความสูงขึ้นอยู่กับรายละเอียด
@@ -96,26 +97,130 @@ class EventScreen(Screen):
             # Background
             card.canvas.before.clear()
             with card.canvas.before:
-                Color(0.97, 0.97, 0.98, 1)  # light grey
-                card.bg = RoundedRectangle(size=card.size, pos=card.pos, radius=[dp(8)])
-                Color(0.85, 0.85, 0.85, 1)
-                Line(rectangle=(card.x, card.y, card.width, card.height), width=1)
+                # พื้นหลัง
+                Color(0.97, 0.97, 0.98, 1)
+                card.bg = RoundedRectangle(
+                    size=card.size,
+                    pos=card.pos,
+                    radius=[dp(8)]
+                )
 
-            # อัปเดตตำแหน่งเมื่อ card เปลี่ยน size/pos
-            card.bind(pos=lambda inst, val, r=card.bg: setattr(r, "pos", val))
-            card.bind(size=lambda inst, val, r=card.bg: setattr(r, "size", val))
+                # กรอบ
+                Color(0.8, 0.8, 0.8, 1)
+                card.border = Line(
+                    rounded_rectangle=(
+                        card.x,
+                        card.y,
+                        card.width,
+                        card.height,
+                        dp(8)
+                    ),
+                    width=1.2
+                )
 
-            # Header: icon + title
-            icon = ">" if ev["is_task"] else ">"
+            # อัปเดตตำแหน่ง/ขนาด ทั้ง bg และ border
+            def update_canvas(instance, value, card=card):
+                card.bg.pos = card.pos
+                card.bg.size = card.size
+                card.border.rounded_rectangle = (
+                    card.x,
+                    card.y,
+                    card.width,
+                    card.height,
+                    dp(8)
+                )
+
+            card.bind(pos=update_canvas, size=update_canvas)
+
+
+            
+
+
+
+            # ===== HEADER ROW =====
+            header = BoxLayout(
+                orientation="horizontal",
+                size_hint_y=None,
+                height=dp(25),
+                padding=(dp(8), 20, dp(8), 0)  
+            )
+
+            # STATUS
+
+            
+
+            status_text = "Done" if ev["done"] else "Pending"
+            status_label = Label(
+                text=f"{status_text}",
+                size_hint_x=None,
+                width=dp(80),
+                font_size=dp(16),
+                color=(0.2, 0.6, 0.3, 1) if ev["done"] else (0.9, 0.2, 0.2, 1)
+
+            )
+
+            # TITLE
             title_label = Label(
-                text=f"{icon} {ev['title']}",
+                text=ev["title"],
                 font_size=dp(14),
                 bold=True,
-                color=(0.2, 0.2, 0.2, 1),
-                size_hint_y=None,
-                height=dp(20),
+                halign="center",
+                valign="middle",
+                size_hint_x=1,  
+                color = (0, 0, 0, 1)  # light grey
+
             )
-            card.add_widget(title_label)
+            title_label.bind(width=lambda instance, value: setattr(instance, "text_size", (value, None)))
+
+            # ===== DAY LEFT =====
+            countdown_text = ""
+
+            if ev["date"]:
+                try:
+                    if ev.get("time"):
+                        event_datetime = datetime.strptime(
+                            f"{ev['date']} {ev['time']}",
+                            "%Y-%m-%d %H:%M"
+                        )
+                    else:
+                        event_datetime = datetime.strptime(
+                            ev["date"],
+                            "%Y-%m-%d"
+                        )
+
+                    now = datetime.now()
+                    delta = event_datetime - now
+                    total_seconds = int(delta.total_seconds())
+
+                    if total_seconds > 0:
+                        days = total_seconds // (24 * 3600)
+                        hours = (total_seconds % (24 * 3600)) // 3600
+                        countdown_text = f"{days} D {hours} H Left"
+                    else:
+                        countdown_text = "Passed"
+
+                except:
+                    countdown_text = ""
+
+            dayleft_label = Label(
+                text=f"{countdown_text}" if countdown_text else "",
+                size_hint_x=None,
+                width=dp(80),
+                font_size=dp(16),
+                color=(0.3, 0.5, 0.9, 1)
+            )
+
+            # ใส่เข้า header
+            header.add_widget(status_label)
+            header.add_widget(title_label)
+            header.add_widget(dayleft_label)
+
+            card.add_widget(header)
+
+            
+
+            # days left
+            
 
             # วันที่และเวลา
             dt_text = ev["date"]
@@ -146,7 +251,7 @@ class EventScreen(Screen):
 
             # Done / Undo
             done_btn = Button(
-                text="✓ Done" if not ev["done"] else "✓ Undo",
+                text="Done" if not ev["done"] else "Undo",
                 background_normal="",
                 background_color=(
                     (0.3, 0.7, 0.4, 1) if not ev["done"] else (0.9, 0.9, 0.9, 1)
@@ -158,7 +263,7 @@ class EventScreen(Screen):
 
             # Delete
             del_btn = Button(
-                text="✕ Delete",
+                text="Delete",
                 background_normal="",
                 background_color=(0.88, 0.43, 0.45, 1),
                 color=(1, 1, 1, 1),

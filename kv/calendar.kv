@@ -102,7 +102,7 @@
             spacing: dp(5)
             canvas.before:
                 Color:
-                    rgba: 1,0.85,0.9,1   # lighter pastel pink for weekdays
+                    rgba: 1, 0.97, 0.98, 1   # lighter pastel pink for weekdays
                 Rectangle:
                     size: self.size
                     pos: self.pos
@@ -139,6 +139,12 @@
                 spacing: dp(5)
                 size_hint_y: None
                 height: self.minimum_height
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1   
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
 
         # -------- Navigation Buttons --------
         BoxLayout:
